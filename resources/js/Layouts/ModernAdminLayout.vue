@@ -17,6 +17,14 @@ const showingMobileMenu = ref(false);
 const darkMode = ref(false);
 const page = usePage();
 const user = computed(() => page.props.auth.user);
+const settings = computed(() => page.props.settings || {
+    websiteTitle: 'Laravel',
+    websiteSubtitle: '',
+    websiteLogo: null,
+    websiteFavicon: null,
+    websiteThumbnail: null,
+    footerCopyright: '© ' + new Date().getFullYear() + ' Laravel'
+});
 
 const toggleDarkMode = () => {
   darkMode.value = !darkMode.value;
@@ -29,8 +37,7 @@ const toggleDarkMode = () => {
 
 // Hanya menampilkan menu yang sudah ada implementasinya
 const navigation = [
-    { name: 'Dashboard', href: route('dashboard'), icon: Home, current: route().current('dashboard') },
-    { name: 'Pengaturan Website', href: route('admin.settings.index'), icon: Settings, current: route().current('admin.settings.*') },
+    { name: 'Dashboard', href: route('admin.dashboard'), icon: Home, current: route().current('admin.dashboard') },
 ];
 </script>
 
@@ -44,8 +51,14 @@ const navigation = [
       <div class="flex h-full flex-col">
         <!-- Sidebar header -->
         <div class="flex h-16 items-center justify-between border-b px-4 dark:border-gray-700">
-          <Link :href="route('dashboard')" class="flex items-center">
-            <span class="text-xl font-bold text-gray-800 dark:text-white">AdminPanel</span>
+          <Link :href="route('admin.dashboard')" class="flex items-center">
+            <img 
+              v-if="settings.websiteLogo" 
+              :src="settings.websiteLogo" 
+              :alt="settings.websiteTitle" 
+              class="h-8 w-auto mr-2" 
+            />
+            <span class="text-xl font-bold text-gray-800 dark:text-white">{{ settings.websiteTitle }}</span>
           </Link>
           <button 
             @click="showingMobileMenu = false" 

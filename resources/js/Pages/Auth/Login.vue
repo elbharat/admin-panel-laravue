@@ -1,10 +1,21 @@
 <script setup>
-import { Head, Link, useForm } from '@inertiajs/vue3';
+import { Head, Link, useForm, usePage } from '@inertiajs/vue3';
+import { computed } from 'vue';
 import AuthenticationCard from '@/Components/AuthenticationCard.vue';
 import InputError from '@/Components/ui/input-error.vue';
 import InputLabel from '@/Components/ui/input-label.vue';
 import { Button } from '@/Components/ui/button';
 import { Input } from '@/Components/ui/input';
+
+const page = usePage();
+const settings = computed(() => page.props.settings || {
+    websiteTitle: 'Laravel',
+    websiteSubtitle: '',
+    websiteLogo: null,
+    websiteFavicon: null,
+    websiteThumbnail: null,
+    footerCopyright: '© ' + new Date().getFullYear() + ' Laravel'
+});
 
 defineProps({
     canResetPassword: {
@@ -29,11 +40,20 @@ const submit = () => {
 </script>
 
 <template>
-    <Head title="Log in" />
+    <Head :title="'Login - ' + settings.websiteTitle" />
 
     <AuthenticationCard>
         <template #logo>
-            <img src="/images/logo.png" alt="Logo" class="w-20 h-20" />
+            <div class="text-center">
+                <img 
+                    v-if="settings.websiteLogo" 
+                    :src="settings.websiteLogo" 
+                    :alt="settings.websiteTitle" 
+                    class="mx-auto w-20 h-20 object-contain" 
+                />
+                <h1 class="mt-4 text-2xl font-bold text-gray-900 dark:text-white">{{ settings.websiteTitle }}</h1>
+                <p v-if="settings.websiteSubtitle" class="mt-1 text-sm text-gray-600 dark:text-gray-400">{{ settings.websiteSubtitle }}</p>
+            </div>
         </template>
 
         <div v-if="status" class="mb-4 text-sm font-medium text-green-600">

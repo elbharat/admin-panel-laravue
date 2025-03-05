@@ -4,15 +4,18 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
-        <title inertia>{{ $settings['title'] ?? config('app.name', 'Laravel') }}</title>
-        <meta name="description" content="{{ $settings['subtitle'] ?? '' }}">
-
-        @if($settings['favicon'])
-        <link rel="icon" href="{{ asset('storage/' . $settings['favicon']) }}">
+        @if(isset($page['props']['settings']['favicon']))
+            <link rel="icon" href="{{ asset($page['props']['settings']['favicon']) }}">
         @endif
 
-        @if($settings['thumbnail'])
-        <meta property="og:image" content="{{ asset('storage/' . $settings['thumbnail']) }}">
+        <title inertia>{{ config('app.name', 'Laravel') }}</title>
+        
+        @if(isset($page['props']['settings']['subtitle']))
+            <meta name="description" content="{{ $page['props']['settings']['subtitle'] }}">
+        @endif
+
+        @if(isset($page['props']['settings']['thumbnail']))
+            <meta property="og:image" content="{{ asset($page['props']['settings']['thumbnail']) }}">
         @endif
 
         <!-- Fonts -->
@@ -21,6 +24,7 @@
 
         <!-- Scripts -->
         @routes
+        @viteReactRefresh
         @vite(['resources/js/app.js', "resources/js/Pages/{$page['component']}.vue"])
         @inertiaHead
     </head>
