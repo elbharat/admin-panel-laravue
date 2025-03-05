@@ -24,4 +24,11 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
+// Admin routes
+Route::middleware(['auth', 'verified'])->prefix('admin')->name('admin.')->group(function () {
+    // Settings routes
+    Route::get('/settings', [App\Http\Controllers\Admin\SettingController::class, 'index'])->name('settings.index');
+    Route::post('/settings', [App\Http\Controllers\Admin\SettingController::class, 'update'])->name('settings.update');
+});
+
 require __DIR__.'/auth.php';

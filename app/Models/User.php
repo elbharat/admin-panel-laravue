@@ -4,13 +4,15 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable;
+    use HasApiTokens, HasFactory, Notifiable, SoftDeletes;
 
     /**
      * The attributes that are mass assignable.
@@ -20,7 +22,12 @@ class User extends Authenticatable
     protected $fillable = [
         'name',
         'email',
+        'username',
         'password',
+        'is_admin',
+        'is_active',
+        'avatar',
+        'email_verified_at'
     ];
 
     /**
@@ -43,6 +50,23 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'is_admin' => 'boolean',
+            'is_active' => 'boolean'
         ];
+    }
+
+    public function isAdmin(): bool
+    {
+        return $this->is_admin;
+    }
+
+    public function isActive(): bool
+    {
+        return $this->is_active;
+    }
+
+    public function getAvatarUrl(): string
+    {
+        return $this->avatar ?? 'https://ui-avatars.com/api/?name=' . urlencode($this->name);
     }
 }

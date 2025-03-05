@@ -5,11 +5,16 @@
   "tailwind": {
     "config": "tailwind.config.js",
     "css": "resources/css/app.css",
-    "baseColor": "slate"
+    "baseColor": "neutral",
+    "cssVariables": true,
+    "prefix": ""
   },
-  "framework": "laravel",
   "aliases": {
-    "components": "@/Components",
-    "utils": "@/lib/utils"
-  }
-} 
+    "components": "@/components",
+    "composables": "@/composables",
+    "utils": "@/lib/utils",
+    "ui": "@/components/ui",
+    "lib": "@/lib"
+  },
+  "iconLibrary": "lucide"
+}

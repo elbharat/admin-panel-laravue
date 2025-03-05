@@ -2,18 +2,10 @@
 import { ref, computed } from 'vue';
 import { Link, usePage } from '@inertiajs/vue3';
 import { 
-  Menu, 
-  ChevronDown, 
   Home, 
-  Users, 
-  ShoppingCart, 
-  Package, 
-  BarChart2, 
   Settings, 
   LogOut, 
   User, 
-  Bell, 
-  Search,
   Moon,
   Sun,
   Menu as MenuIcon,
@@ -35,13 +27,10 @@ const toggleDarkMode = () => {
   }
 };
 
-const mainNavItems = [
-  { name: 'Dashboard', route: 'dashboard', icon: Home },
-  { name: 'Users', route: 'dashboard', icon: Users },
-  { name: 'Orders', route: 'dashboard', icon: ShoppingCart },
-  { name: 'Products', route: 'dashboard', icon: Package },
-  { name: 'Analytics', route: 'dashboard', icon: BarChart2 },
-  { name: 'Settings', route: 'dashboard', icon: Settings },
+// Hanya menampilkan menu yang sudah ada implementasinya
+const navigation = [
+    { name: 'Dashboard', href: route('dashboard'), icon: Home, current: route().current('dashboard') },
+    { name: 'Pengaturan Website', href: route('admin.settings.index'), icon: Settings, current: route().current('admin.settings.*') },
 ];
 </script>
 
@@ -68,11 +57,11 @@ const mainNavItems = [
         
         <!-- Sidebar content -->
         <nav class="flex-1 space-y-1 px-2 py-4">
-          <div v-for="item in mainNavItems" :key="item.name" class="mb-2">
+          <div v-for="item in navigation" :key="item.name" class="mb-2">
             <Link
-              :href="route(item.route)"
+              :href="item.href"
               :class="[
-                route().current(item.route) 
+                item.current
                   ? 'bg-gray-100 text-gray-900 dark:bg-gray-700 dark:text-white' 
                   : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900 dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-white',
                 'group flex items-center rounded-md px-2 py-2 text-base font-medium'
@@ -128,18 +117,6 @@ const mainNavItems = [
           
           <div class="flex flex-1 items-center justify-end">
             <div class="flex items-center space-x-4">
-              <!-- Search -->
-              <div class="relative hidden md:block">
-                <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-                  <Search class="h-4 w-4 text-gray-400" />
-                </div>
-                <input
-                  type="text"
-                  placeholder="Search..."
-                  class="w-full rounded-md border border-gray-300 bg-white py-2 pl-10 pr-4 text-sm text-gray-700 focus:border-blue-500 focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400"
-                />
-              </div>
-              
               <!-- Dark mode toggle -->
               <button 
                 @click="toggleDarkMode" 
@@ -147,12 +124,6 @@ const mainNavItems = [
               >
                 <Moon v-if="!darkMode" class="h-5 w-5" />
                 <Sun v-else class="h-5 w-5" />
-              </button>
-              
-              <!-- Notifications -->
-              <button class="relative rounded-md p-1 text-gray-500 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">
-                <Bell class="h-5 w-5" />
-                <span class="absolute right-0 top-0 flex h-2 w-2 rounded-full bg-red-500"></span>
               </button>
               
               <!-- Profile dropdown -->

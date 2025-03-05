@@ -15,7 +15,6 @@ export default defineConfig({
                     includeAbsolute: false,
                 },
             },
-            jsx: true,
         }),
     ],
     resolve: {
@@ -24,9 +23,12 @@ export default defineConfig({
         },
     },
     server: {
-        host: '127.0.0.1',
+        host: true,
         hmr: {
-            host: '127.0.0.1'
+            host: 'localhost'
         },
+        watch: {
+            usePolling: true
+        }
     },
 });
