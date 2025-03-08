@@ -46,9 +46,9 @@ const closeModal = () => {
 
     <ModernAdminLayout>
         <template #header>
-            <div class="flex justify-between items-center">
+            <div class="flex justify-between items-center w-full">
                 <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">Users Management</h2>
-                <Button @click="openCreateModal" variant="primary" class="flex items-center gap-2">
+                <Button @click="openCreateModal" variant="primary" class="flex items-center gap-2 ml-4">
                     <Plus class="w-4 h-4" />
                     Create User
                 </Button>
