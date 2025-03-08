@@ -1,0 +1,14 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+
+# Your rule content
+
+- Ini adalah aplikasi starterkit laravel-vue
+- Ini adalah project laravel 12, Inertia Js, Vue, Shadcn UI, Tailwindcss
+- Gunakan pendekatan best practice dalam setiap membuat kode dan pengembangan, serta pendekatan yang minim error
+- Gunakan stack terbaru semua, hindari penggunakan package yang kompleks yang hanya memberbesar ukuran aplikasi
+- Kamu tidak boleh menghapus kode atau fitur apapun tanpa izin dan tanpa konfirmasi
+- Jadilah fullstack developer dan software engineer

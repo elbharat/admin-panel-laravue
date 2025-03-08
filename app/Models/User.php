@@ -2,17 +2,16 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable
 {
-    /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasApiTokens, HasFactory, Notifiable, SoftDeletes;
+    use HasApiTokens, HasFactory, Notifiable, SoftDeletes, HasRoles;
 
     /**
      * The attributes that are mass assignable.
@@ -27,6 +26,7 @@ class User extends Authenticatable
         'is_admin',
         'is_active',
         'avatar',
+        'profile_photo_path',
         'email_verified_at'
     ];
 
@@ -57,7 +57,7 @@ class User extends Authenticatable
 
     public function isAdmin(): bool
     {
-        return $this->is_admin;
+        return $this->is_admin || $this->hasRole('admin');
     }
 
     public function isActive(): bool
@@ -67,6 +67,10 @@ class User extends Authenticatable
 
     public function getAvatarUrl(): string
     {
+        if ($this->profile_photo_path) {
+            return asset('storage/' . $this->profile_photo_path);
+        }
+        
         return $this->avatar ?? 'https://ui-avatars.com/api/?name=' . urlencode($this->name);
     }
 }

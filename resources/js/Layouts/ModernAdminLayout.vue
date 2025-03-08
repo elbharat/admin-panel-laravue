@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import { Link, usePage } from '@inertiajs/vue3';
 import { 
   Home, 
@@ -12,6 +12,7 @@ import {
   X
 } from 'lucide-vue-next';
 import Button from '@/Components/ui/button.vue';
+import MainMenu from '@/Components/Navigation/MainMenu.vue';
 
 const showingMobileMenu = ref(false);
 const darkMode = ref(false);
@@ -26,8 +27,16 @@ const settings = computed(() => page.props.settings || {
     footerCopyright: '© ' + new Date().getFullYear() + ' Laravel'
 });
 
-const toggleDarkMode = () => {
-  darkMode.value = !darkMode.value;
+// Fungsi untuk mendeteksi preferensi dark mode dari sistem
+const getSystemPreference = () => {
+  return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+};
+
+// Fungsi untuk mengatur dark mode
+const setDarkMode = (value) => {
+  darkMode.value = value;
+  localStorage.setItem('darkMode', value ? 'true' : 'false');
+  
   if (darkMode.value) {
     document.documentElement.classList.add('dark');
   } else {
@@ -35,10 +44,30 @@ const toggleDarkMode = () => {
   }
 };
 
-// Hanya menampilkan menu yang sudah ada implementasinya
-const navigation = [
-    { name: 'Dashboard', href: route('admin.dashboard'), icon: Home, current: route().current('admin.dashboard') },
-];
+// Toggle dark mode
+const toggleDarkMode = () => {
+  setDarkMode(!darkMode.value);
+};
+
+// Inisialisasi dark mode dari localStorage atau preferensi sistem
+onMounted(() => {
+  const savedMode = localStorage.getItem('darkMode');
+  
+  if (savedMode !== null) {
+    // Gunakan preferensi yang tersimpan
+    setDarkMode(savedMode === 'true');
+  } else {
+    // Gunakan preferensi sistem
+    setDarkMode(getSystemPreference());
+  }
+  
+  // Tambahkan listener untuk perubahan preferensi sistem
+  window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
+    if (localStorage.getItem('darkMode') === null) {
+      setDarkMode(e.matches);
+    }
+  });
+});
 </script>
 
 <template>
@@ -51,7 +80,7 @@ const navigation = [
       <div class="flex h-full flex-col">
         <!-- Sidebar header -->
         <div class="flex h-16 items-center justify-between border-b px-4 dark:border-gray-700">
-          <Link :href="route('admin.dashboard')" class="flex items-center">
+          <Link :href="route('dashboard')" class="flex items-center">
             <img 
               v-if="settings.websiteLogo" 
               :src="settings.websiteLogo" 
@@ -69,22 +98,7 @@ const navigation = [
         </div>
         
         <!-- Sidebar content -->
-        <nav class="flex-1 space-y-1 px-2 py-4">
-          <div v-for="item in navigation" :key="item.name" class="mb-2">
-            <Link
-              :href="item.href"
-              :class="[
-                item.current
-                  ? 'bg-gray-100 text-gray-900 dark:bg-gray-700 dark:text-white' 
-                  : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900 dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-white',
-                'group flex items-center rounded-md px-2 py-2 text-base font-medium'
-              ]"
-            >
-              <component :is="item.icon" class="mr-3 h-5 w-5 flex-shrink-0" />
-              {{ item.name }}
-            </Link>
-          </div>
-        </nav>
+        <MainMenu />
         
         <!-- Sidebar footer -->
         <div class="border-t p-4 dark:border-gray-700">
@@ -157,14 +171,21 @@ const navigation = [
 
       <!-- Page content -->
       <main class="flex-1 overflow-auto bg-gray-50 dark:bg-gray-900">
-        <!-- Page header -->
-        <div class="border-b bg-white px-4 py-4 dark:border-gray-700 dark:bg-gray-800 sm:px-6 lg:px-8" v-if="$slots.header">
-          <slot name="header" />
-        </div>
-        
-        <!-- Page body -->
-        <div class="p-4 sm:p-6 lg:p-8">
-          <slot />
+        <div class="py-6">
+          <div class="mx-auto px-4 sm:px-6 md:px-8">
+            <div class="flex items-center justify-between">
+              <slot name="header"></slot>
+            </div>
+            
+            <!-- Breadcrumb -->
+            <div class="mt-2">
+              <slot name="breadcrumb"></slot>
+            </div>
+          </div>
+          
+          <div class="mx-auto px-4 sm:px-6 md:px-8">
+            <slot></slot>
+          </div>
         </div>
       </main>
     </div>

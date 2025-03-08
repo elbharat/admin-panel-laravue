@@ -17,18 +17,4 @@ export default defineConfig({
             },
         }),
     ],
-    resolve: {
-        alias: {
-            '@': '/resources/js',
-        },
-    },
-    server: {
-        host: true,
-        hmr: {
-            host: 'localhost'
-        },
-        watch: {
-            usePolling: true
-        }
-    },
 });
