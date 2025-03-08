@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Users;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Services\UserService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules;
@@ -13,12 +14,27 @@ use Spatie\Permission\Models\Role;
 class UserController extends Controller
 {
     /**
+     * @var UserService
+     */
+    protected $userService;
+
+    /**
+     * UserController constructor.
+     *
+     * @param UserService $userService
+     */
+    public function __construct(UserService $userService)
+    {
+        $this->userService = $userService;
+    }
+
+    /**
      * Display a listing of the resource.
      */
     public function index()
     {
         return Inertia::render('Users/Index', [
-            'users' => User::with('roles')->get(),
+            'users' => $this->userService->getAllUsers(),
             'roles' => Role::all()
         ]);
     }
@@ -40,22 +56,14 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users',
-            'password' => ['required', 'confirmed', Rules\Password::defaults()],
-            'role' => 'required|exists:roles,name'
-        ]);
-
-        $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-        ]);
-
-        $user->assignRole($request->role);
-
-        return redirect()->back();
+        try {
+            $this->userService->createUser($request->all());
+            return redirect()->back();
+        } catch (\Exception $e) {
+            return redirect()->back()->withErrors([
+                'error' => $e->getMessage()
+            ]);
+        }
     }
 
     /**
@@ -90,20 +98,14 @@ class UserController extends Controller
      */
     public function update(Request $request, User $user)
     {
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users,email,' . $user->id,
-            'role' => 'required|exists:roles,name'
-        ]);
-
-        $user->update([
-            'name' => $request->name,
-            'email' => $request->email,
-        ]);
-
-        $user->syncRoles([$request->role]);
-
-        return redirect()->back();
+        try {
+            $this->userService->updateUser($request->all(), $user->id);
+            return redirect()->back();
+        } catch (\Exception $e) {
+            return redirect()->back()->withErrors([
+                'error' => $e->getMessage()
+            ]);
+        }
     }
 
     /**
@@ -111,8 +113,7 @@ class UserController extends Controller
      */
     public function destroy(User $user)
     {
-        $user->delete();
-
+        $this->userService->deleteUser($user->id);
         return redirect()->back();
     }
 } 
