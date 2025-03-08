@@ -1,8 +1,8 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\Admin\DashboardController;
-use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\Dashboard\DashboardController;
+use App\Http\Controllers\Users\UserController;
 use App\Http\Controllers\ProfilePhotoController;
 use App\Models\Role;
 use Illuminate\Foundation\Application;
