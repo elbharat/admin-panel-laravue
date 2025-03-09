@@ -5,6 +5,8 @@ import {
     Home, 
     Users2,
     Settings,
+    Shield,
+    UserCog,
 } from 'lucide-vue-next';
 
 const page = usePage();
@@ -23,6 +25,20 @@ const navigation = computed(() => [
         icon: Users2, 
         current: route().current('users.*'),
         show: user.value?.is_admin || user.value?.permissions?.includes('manage users')
+    },
+    { 
+        name: 'Permissions', 
+        href: route('permissions.index'), 
+        icon: Shield, 
+        current: route().current('permissions.*'),
+        show: user.value?.is_admin
+    },
+    { 
+        name: 'Roles', 
+        href: route('roles.index'), 
+        icon: UserCog, 
+        current: route().current('roles.*'),
+        show: user.value?.is_admin
     },
 ]);
 </script>

@@ -32,6 +32,7 @@ class UserController extends Controller
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
+            'is_active' => true,
         ]);
 
         $user->assignRole($request->role);
@@ -41,17 +42,31 @@ class UserController extends Controller
 
     public function update(Request $request, User $user)
     {
-        $request->validate([
+        $rules = [
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users,email,' . $user->id,
             'role' => 'required|exists:roles,name'
-        ]);
+        ];
 
-        $user->update([
-            'name' => $request->name,
-            'email' => $request->email,
-        ]);
+        // Only validate password if it's provided
+        if ($request->filled('password')) {
+            $rules['password'] = ['confirmed', Rules\Password::defaults()];
+        }
 
+        $validated = $request->validate($rules);
+
+        // Update basic user data
+        $userData = [
+            'name' => $validated['name'],
+            'email' => $validated['email'],
+        ];
+
+        // Only update password if it's provided
+        if ($request->filled('password')) {
+            $userData['password'] = Hash::make($validated['password']);
+        }
+
+        $user->update($userData);
         $user->syncRoles([$request->role]);
 
         return redirect()->back();
@@ -59,6 +74,11 @@ class UserController extends Controller
 
     public function destroy(User $user)
     {
+        // Prevent deleting yourself
+        if (auth()->id() === $user->id) {
+            return redirect()->back()->with('error', 'You cannot delete your own account.');
+        }
+
         $user->delete();
 
         return redirect()->back();

@@ -4,9 +4,11 @@ import { ChevronDown } from 'lucide-vue-next';
 </script>
 
 <template>
-    <SelectTrigger class="SelectTrigger" v-bind="$attrs">
+    <SelectTrigger 
+        class="flex h-10 w-full items-center justify-between rounded-md border border-gray-300 bg-transparent px-3 py-2 text-sm ring-offset-white placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 dark:border-gray-700 dark:ring-offset-gray-950 dark:placeholder:text-gray-400 dark:focus:ring-indigo-500"
+    >
         <slot />
-        <ChevronDown class="w-4 h-4 opacity-50" />
+        <ChevronDown class="h-4 w-4 opacity-50" />
     </SelectTrigger>
 </template>
 

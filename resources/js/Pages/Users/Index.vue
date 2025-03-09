@@ -1,6 +1,6 @@
 <script setup>
 import { ref } from 'vue';
-import { Head } from '@inertiajs/vue3';
+import { Head, router, Link } from '@inertiajs/vue3';
 import ModernAdminLayout from '@/Layouts/ModernAdminLayout.vue';
 import Button from '@/Components/ui/button/Button.vue';
 import Select from '@/Components/ui/select/Select.vue';
@@ -39,6 +39,14 @@ const closeModal = () => {
     showModal.value = false;
     editingUser.value = null;
 };
+
+const deleteUser = (userId) => {
+    if (confirm('Are you sure you want to delete this user?')) {
+        router.delete(route('users.destroy', userId), {
+            preserveScroll: true
+        });
+    }
+};
 </script>
 
 <template>
@@ -48,10 +56,12 @@ const closeModal = () => {
         <template #header>
             <div class="flex justify-between items-center w-full">
                 <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">Users Management</h2>
-                <Button @click="openCreateModal" variant="primary" class="flex items-center gap-2 ml-4">
-                    <Plus class="w-4 h-4" />
-                    Create User
-                </Button>
+                <Link :href="route('users.create')">
+                    <Button variant="primary" class="flex items-center gap-2 ml-4">
+                        <Plus class="w-4 h-4" />
+                        Create User
+                    </Button>
+                </Link>
             </div>
         </template>
 
@@ -83,11 +93,18 @@ const closeModal = () => {
                                             </span>
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
-                                            <Button @click="openEditModal(user)" variant="secondary" size="sm" class="inline-flex items-center gap-1">
-                                                <Pencil class="w-4 h-4" />
-                                                Edit
-                                            </Button>
-                                            <Button variant="danger" size="sm" class="inline-flex items-center gap-1">
+                                            <Link :href="route('users.edit', user.id)">
+                                                <Button variant="secondary" size="sm" class="inline-flex items-center gap-1">
+                                                    <Pencil class="w-4 h-4" />
+                                                    Edit
+                                                </Button>
+                                            </Link>
+                                            <Button 
+                                                @click="deleteUser(user.id)" 
+                                                variant="danger" 
+                                                size="sm" 
+                                                class="inline-flex items-center gap-1"
+                                            >
                                                 <Trash class="w-4 h-4" />
                                                 Delete
                                             </Button>

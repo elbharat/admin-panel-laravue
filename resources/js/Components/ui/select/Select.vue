@@ -3,16 +3,19 @@ import { SelectRoot } from 'radix-vue';
 
 defineProps({
     modelValue: {
-        type: [String, Number],
+        type: String,
         required: true
     }
 });
 
-defineEmits(['update:modelValue']);
+const emit = defineEmits(['update:modelValue']);
 </script>
 
 <template>
-    <SelectRoot v-bind="$attrs" :model-value="modelValue" @update:model-value="$emit('update:modelValue', $event)">
+    <SelectRoot 
+        :value="modelValue"
+        @update:value="(val) => emit('update:modelValue', val)"
+    >
         <slot />
     </SelectRoot>
 </template> 

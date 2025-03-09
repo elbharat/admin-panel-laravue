@@ -32,10 +32,41 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     // Users Management (hanya untuk admin)
     Route::middleware(['role:admin'])->group(function () {
-        Route::get('/users', [UserController::class, 'index'])->name('users.index');
-        Route::post('/users', [UserController::class, 'store'])->name('users.store');
-        Route::put('/users/{user}', [UserController::class, 'update'])->name('users.update');
-        Route::delete('/users/{user}', [UserController::class, 'destroy'])->name('users.destroy');
+        // Users routes
+        Route::controller(UserController::class)->group(function () {
+            Route::get('/users', 'index')->name('users.index');
+            Route::get('/users/create', 'create')->name('users.create');
+            Route::post('/users', 'store')->name('users.store');
+            Route::get('/users/{user}/edit', 'edit')->name('users.edit');
+            Route::put('/users/{user}', 'update')->name('users.update');
+            Route::delete('/users/{user}', 'destroy')->name('users.destroy');
+        });
+        
+        // Permissions routes
+        Route::get('/permissions', [App\Http\Controllers\Permissions\PermissionController::class, 'index'])->name('permissions.index');
+        
+        // Permission Groups routes
+        Route::get('/permission-groups/create', [App\Http\Controllers\Permissions\PermissionController::class, 'createGroup'])->name('permission-groups.create');
+        Route::post('/permission-groups', [App\Http\Controllers\Permissions\PermissionController::class, 'storeGroup'])->name('permission-groups.store');
+        Route::get('/permission-groups/{id}/edit', [App\Http\Controllers\Permissions\PermissionController::class, 'editGroup'])->name('permission-groups.edit');
+        Route::put('/permission-groups/{id}', [App\Http\Controllers\Permissions\PermissionController::class, 'updateGroup'])->name('permission-groups.update');
+        Route::delete('/permission-groups/{id}', [App\Http\Controllers\Permissions\PermissionController::class, 'destroyGroup'])->name('permission-groups.destroy');
+        
+        // Permissions routes
+        Route::get('/permissions/create', [App\Http\Controllers\Permissions\PermissionController::class, 'createPermission'])->name('permissions.create');
+        Route::post('/permissions', [App\Http\Controllers\Permissions\PermissionController::class, 'storePermission'])->name('permissions.store');
+        Route::get('/permissions/{id}/edit', [App\Http\Controllers\Permissions\PermissionController::class, 'editPermission'])->name('permissions.edit');
+        Route::put('/permissions/{id}', [App\Http\Controllers\Permissions\PermissionController::class, 'updatePermission'])->name('permissions.update');
+        Route::delete('/permissions/{id}', [App\Http\Controllers\Permissions\PermissionController::class, 'destroyPermission'])->name('permissions.destroy');
+        
+        // Roles routes
+        Route::get('/roles', [App\Http\Controllers\Permissions\RoleController::class, 'index'])->name('roles.index');
+        Route::get('/roles/create', [App\Http\Controllers\Permissions\RoleController::class, 'create'])->name('roles.create');
+        Route::post('/roles', [App\Http\Controllers\Permissions\RoleController::class, 'store'])->name('roles.store');
+        Route::get('/roles/{id}/edit', [App\Http\Controllers\Permissions\RoleController::class, 'edit'])->name('roles.edit');
+        Route::put('/roles/{id}', [App\Http\Controllers\Permissions\RoleController::class, 'update'])->name('roles.update');
+        Route::delete('/roles/{id}', [App\Http\Controllers\Permissions\RoleController::class, 'destroy'])->name('roles.destroy');
+        Route::post('/roles/{roleId}/permissions', [App\Http\Controllers\Permissions\PermissionController::class, 'assignPermissions'])->name('roles.permissions.assign');
     });
 });
 

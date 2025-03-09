@@ -2,121 +2,149 @@
 
 namespace App\Services;
 
-use App\Repositories\Interfaces\UserRepositoryInterface;
+use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules;
-use Illuminate\Support\Facades\Validator;
-use Illuminate\Validation\ValidationException;
+use Spatie\Permission\Models\Role;
 
 class UserService
 {
     /**
-     * @var UserRepositoryInterface
-     */
-    protected $userRepository;
-
-    /**
-     * UserService constructor.
+     * Get all users with their roles
      *
-     * @param UserRepositoryInterface $userRepository
-     */
-    public function __construct(UserRepositoryInterface $userRepository)
-    {
-        $this->userRepository = $userRepository;
-    }
-
-    /**
-     * Get all users with roles
-     *
-     * @return mixed
+     * @return \Illuminate\Database\Eloquent\Collection
      */
     public function getAllUsers()
     {
-        return $this->userRepository->getUsersWithRoles();
+        return User::with('roles')->get();
     }
 
     /**
      * Create a new user
      *
      * @param array $data
-     * @return mixed
-     * @throws ValidationException
+     * @return User
+     * @throws \Exception
      */
     public function createUser(array $data)
     {
-        $validator = Validator::make($data, [
-            'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users',
-            'password' => ['required', 'confirmed', Rules\Password::defaults()],
-            'role' => 'required|exists:roles,name'
-        ]);
+        try {
+            \DB::beginTransaction();
 
-        if ($validator->fails()) {
-            throw new ValidationException($validator);
+            // Create user
+            $user = User::create([
+                'name' => $data['name'],
+                'email' => $data['email'],
+                'password' => Hash::make($data['password']),
+                'is_active' => true,
+            ]);
+
+            // Assign role
+            if (isset($data['role'])) {
+                $role = Role::where('name', $data['role'])->firstOrFail();
+                $user->assignRole($role);
+            }
+
+            \DB::commit();
+            
+            return $user->load('roles');
+        } catch (\Exception $e) {
+            \DB::rollBack();
+            \Log::error('Error creating user: ' . $e->getMessage(), [
+                'data' => array_except($data, ['password', 'password_confirmation']),
+                'exception' => $e
+            ]);
+            throw $e;
         }
-
-        $userData = [
-            'name' => $data['name'],
-            'email' => $data['email'],
-            'password' => Hash::make($data['password']),
-        ];
-
-        $user = $this->userRepository->create($userData);
-        $this->userRepository->assignRole($user->id, $data['role']);
-
-        return $user;
     }
 
     /**
-     * Update user
+     * Update a user
      *
      * @param array $data
      * @param int $userId
-     * @return mixed
-     * @throws ValidationException
+     * @return User
+     * @throws \Exception
      */
-    public function updateUser(array $data, $userId)
+    public function updateUser(array $data, int $userId)
     {
-        $validator = Validator::make($data, [
-            'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users,email,' . $userId,
-            'role' => 'required|exists:roles,name'
-        ]);
+        try {
+            \DB::beginTransaction();
 
-        if ($validator->fails()) {
-            throw new ValidationException($validator);
+            $user = User::findOrFail($userId);
+
+            $userData = [
+                'name' => $data['name'],
+                'email' => $data['email'],
+            ];
+
+            // Only update password if it's provided
+            if (!empty($data['password'])) {
+                $userData['password'] = Hash::make($data['password']);
+            }
+
+            $user->update($userData);
+
+            // Update role if provided
+            if (isset($data['role'])) {
+                $role = Role::where('name', $data['role'])->firstOrFail();
+                $user->syncRoles([$role]);
+            }
+
+            \DB::commit();
+            
+            return $user->load('roles');
+        } catch (\Exception $e) {
+            \DB::rollBack();
+            \Log::error('Error updating user: ' . $e->getMessage(), [
+                'user_id' => $userId,
+                'data' => array_except($data, ['password', 'password_confirmation']),
+                'exception' => $e
+            ]);
+            throw $e;
         }
-
-        $userData = [
-            'name' => $data['name'],
-            'email' => $data['email'],
-        ];
-
-        $this->userRepository->update($userData, $userId);
-        $this->userRepository->syncRoles($userId, [$data['role']]);
-
-        return $this->userRepository->find($userId);
     }
 
     /**
-     * Delete user
+     * Delete a user
      *
      * @param int $userId
      * @return bool
+     * @throws \Exception
      */
-    public function deleteUser($userId)
+    public function deleteUser(int $userId)
     {
-        return $this->userRepository->delete($userId);
+        try {
+            \DB::beginTransaction();
+            
+            $user = User::findOrFail($userId);
+            
+            // Remove all roles first
+            $user->roles()->detach();
+            
+            $result = $user->delete();
+            
+            \DB::commit();
+            
+            return $result;
+        } catch (\Exception $e) {
+            \DB::rollBack();
+            \Log::error('Error deleting user: ' . $e->getMessage(), [
+                'user_id' => $userId,
+                'exception' => $e
+            ]);
+            throw $e;
+        }
     }
 
     /**
-     * Find user by ID
+     * Get user by ID with roles
      *
      * @param int $userId
-     * @return mixed
+     * @return User
      */
-    public function findUser($userId)
+    public function getUserById(int $userId)
     {
-        return $this->userRepository->find($userId);
+        return User::with('roles')->findOrFail($userId);
     }
 } 
