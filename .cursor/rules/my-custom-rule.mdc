@@ -3,12 +3,122 @@ description:
 globs: 
 alwaysApply: false
 ---
+PERHATIKAN ATURAN DAN KETENTUAN, LAKUKAN SESUAI PERATURAN INI KETIKA KAMU MENJADI AGENT :
 
-# Your rule content
+### 🏗 Core Stack
+1. **Laravel (Backend Framework)**
+   - Versi terbaru
+   - Fungsi: Backend framework, API, routing, database management
+   - Wajib menggunakan fitur bawaan Laravel untuk:
+     - Authentication
+     - Authorization (Gates & Policies)
+     - Database migrations
+     - Queue & Jobs
+     - Cache
 
-- Ini adalah aplikasi starterkit laravel-vue
-- Ini adalah project laravel 12, Inertia Js, Vue, Shadcn UI, Tailwindcss
-- Gunakan pendekatan best practice dalam setiap membuat kode dan pengembangan, serta pendekatan yang minim error
-- Gunakan stack terbaru semua, hindari penggunakan package yang kompleks yang hanya memberbesar ukuran aplikasi
-- Kamu tidak boleh menghapus kode atau fitur apapun tanpa izin dan tanpa konfirmasi
-- Jadilah fullstack developer dan software engineer
+2. **Vue.js 3 (Frontend Framework)**
+   - Versi: ^3.4.0
+   - Composition API wajib
+   - Setup script dengan `<script setup>`
+
+
+3. **Inertia.js**
+   - Package: `@inertiajs/vue3` (^2.0.0)
+   - Fungsi: Penghubung Laravel-Vue tanpa perlu membuat REST API
+
+### 🎨 UI Layer
+1. **Shadcn Vue**
+   - Package: `shadcn-vue` (^1.0.2)
+   - Fungsi: Komponen UI utama
+   - Semua komponen UI WAJIB menggunakan shadcn-vue
+   - DILARANG menggunakan UI library lain
+
+2. **Radix Vue**
+   - Package: `radix-vue` (^1.9.17)
+   - Fungsi: Headless UI primitives
+   - Basis untuk shadcn-vue components
+
+3. **Tailwind CSS**
+   - Package: `tailwindcss` (^3.2.1)
+   - Plugins wajib:
+     - `@tailwindcss/forms` (^0.5.3)
+     - `tailwindcss-animate` (^1.0.7)
+     - `tailwind-merge` (^3.0.2)
+   - Fungsi: Styling utilities
+   - DILARANG menggunakan CSS framework lain
+
+4. **Lucide Icons**
+   - Package: `lucide-vue-next` (^0.477.0)
+   - Fungsi: Icon library
+   - WAJIB menggunakan Lucide untuk konsistensi
+
+### 🛠 Development Tools
+1. **Vite**
+   - Package: `vite` (^6.0.11)
+   - Plugins:
+     - `@vitejs/plugin-vue`
+     - `laravel-vite-plugin`
+   - Fungsi: Build tool & development server
+
+2. **Utility Packages**
+   - `@vueuse/core`: Vue Composables
+   - `axios`: HTTP Client
+   - `class-variance-authority`: Variant styling
+   - `postcss` & `autoprefixer`: CSS processing
+
+### 📏 Aturan Pengembangan
+1. **Struktur Komponen**
+   ```
+   resources/js/
+   ├── Components/
+   │   ├── ui/           # Shadcn components
+   │   ├── common/       # Shared components
+   │   └── features/     # Feature-specific components
+   ├── Pages/           # Inertia pages
+   ├── Layouts/         # Layout components
+   └── lib/            # Utilities & helpers
+   ```
+
+2. **Styling Rules**
+   - WAJIB menggunakan Tailwind CSS
+   - DILARANG menggunakan CSS langsung kecuali untuk kasus khusus
+   - Gunakan `class-variance-authority` untuk component variants
+   - Ikuti design system dari shadcn-vue
+
+3. **Component Rules**
+   - WAJIB menggunakan Shadcn Vue untuk komponen UI
+   - Komponen custom harus berbasis Shadcn/Radix
+   - Gunakan props validation
+   - Dokumentasikan props dan events
+
+4. **State Management**
+   - Gunakan Composition API Refs & Reactive
+   - Untuk state kompleks, gunakan Pinia (jika diperlukan)
+   - Hindari Vuex
+
+5. **Performance Rules**
+   - Lazy load components dan routes
+   - Optimize images
+   - Minimize bundle size
+   - Gunakan proper caching
+
+### ⛔ Larangan
+1. DILARANG menambah UI library selain Shadcn Vue
+2. DILARANG menggunakan CSS framework selain Tailwind
+3. DILARANG menggunakan icon library selain Lucide
+4. DILARANG menambah package dengan fungsi yang sudah ada
+5. DILARANG menggunakan jQuery atau library legacy
+
+### ✅ Proses Penambahan Package Baru
+1. Diskusi team untuk kebutuhan package
+2. Cek apakah fungsi sudah ada di existing packages
+3. Evaluasi ukuran bundle dan performance impact
+4. Testing kompabilitas dengan existing stack
+5. Dokumentasi penggunaan package
+
+Dengan mengikuti standar ini, kita dapat:
+- Menjaga konsistensi codebase
+- Menghindari redundansi
+- Mengoptimalkan performa
+- Memudahkan maintenance
+- Meminimalisir learning curve untuk developer baru
