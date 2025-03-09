@@ -1,20 +1,22 @@
 <script setup>
 import { cn } from '@/lib/utils';
-import { Primitive } from 'reka-ui';
 
 const props = defineProps({
-  asChild: { type: Boolean, required: false },
-  as: { type: null, required: false, default: 'a' },
-  class: { type: null, required: false },
+  href: { type: String, required: false },
+  class: { type: String, required: false }
 });
 </script>
 
 <template>
-  <Primitive
-    :as="as"
-    :as-child="asChild"
-    :class="cn('transition-colors hover:text-foreground', props.class)"
+  <component
+    :is="href ? 'a' : 'span'"
+    :href="href"
+    :class="cn(
+      'text-sm font-medium transition-colors hover:text-foreground',
+      !href && 'text-muted-foreground',
+      props.class
+    )"
   >
     <slot />
-  </Primitive>
+  </component>
 </template>

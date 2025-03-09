@@ -1,19 +1,20 @@
 <script setup>
-import { DropdownMenuRoot, useForwardPropsEmits } from 'reka-ui';
+import { DropdownMenu as DropdownMenuPrimitive } from 'radix-vue'
+import { cn } from '@/lib/utils'
 
 const props = defineProps({
-  defaultOpen: { type: Boolean, required: false },
   open: { type: Boolean, required: false },
+  defaultOpen: { type: Boolean, required: false },
+  modal: { type: Boolean, required: false, default: true },
   dir: { type: String, required: false },
-  modal: { type: Boolean, required: false },
-});
-const emits = defineEmits(['update:open']);
+  class: { type: String, required: false }
+})
 
-const forwarded = useForwardPropsEmits(props, emits);
+defineEmits(['update:open'])
 </script>
 
 <template>
-  <DropdownMenuRoot v-bind="forwarded">
+  <DropdownMenuPrimitive.Root v-bind="props">
     <slot />
-  </DropdownMenuRoot>
+  </DropdownMenuPrimitive.Root>
 </template>

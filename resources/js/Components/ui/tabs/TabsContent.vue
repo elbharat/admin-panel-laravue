@@ -1,33 +1,22 @@
 <script setup>
-import { cn } from '@/lib/utils';
-import { TabsContent } from 'reka-ui';
-import { computed } from 'vue';
+import { Tabs as TabsPrimitive } from 'radix-vue'
+import { cn } from '@/lib/utils'
 
 const props = defineProps({
-  value: { type: [String, Number], required: true },
+  value: { type: String, required: true },
   forceMount: { type: Boolean, required: false },
-  asChild: { type: Boolean, required: false },
-  as: { type: null, required: false },
-  class: { type: null, required: false },
-});
-
-const delegatedProps = computed(() => {
-  const { class: _, ...delegated } = props;
-
-  return delegated;
-});
+  class: { type: String, required: false }
+})
 </script>
 
 <template>
-  <TabsContent
-    :class="
-      cn(
-        'mt-2 ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2',
-        props.class,
-      )
-    "
-    v-bind="delegatedProps"
+  <TabsPrimitive.Content
+    :class="cn(
+      'mt-2 ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2',
+      props.class
+    )"
+    v-bind="props"
   >
     <slot />
-  </TabsContent>
+  </TabsPrimitive.Content>
 </template>

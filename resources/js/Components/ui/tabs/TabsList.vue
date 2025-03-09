@@ -1,32 +1,19 @@
 <script setup>
-import { cn } from '@/lib/utils';
-import { TabsList } from 'reka-ui';
-import { computed } from 'vue';
+import { Tabs as TabsPrimitive } from 'radix-vue'
+import { cn } from '@/lib/utils'
 
 const props = defineProps({
-  loop: { type: Boolean, required: false },
-  asChild: { type: Boolean, required: false },
-  as: { type: null, required: false },
-  class: { type: null, required: false },
-});
-
-const delegatedProps = computed(() => {
-  const { class: _, ...delegated } = props;
-
-  return delegated;
-});
+  class: { type: String, required: false }
+})
 </script>
 
 <template>
-  <TabsList
-    v-bind="delegatedProps"
-    :class="
-      cn(
-        'inline-flex items-center justify-center rounded-lg bg-muted p-1 text-muted-foreground',
-        props.class,
-      )
-    "
+  <TabsPrimitive.List
+    :class="cn(
+      'inline-flex h-10 items-center justify-center rounded-md bg-muted p-1 text-muted-foreground',
+      props.class
+    )"
   >
     <slot />
-  </TabsList>
+  </TabsPrimitive.List>
 </template>

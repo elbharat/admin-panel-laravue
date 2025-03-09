@@ -1,37 +1,25 @@
 <script setup>
-import { cn } from '@/lib/utils';
-import { ChevronRight } from 'lucide-vue-next';
-import { DropdownMenuSubTrigger, useForwardProps } from 'reka-ui';
-import { computed } from 'vue';
+import { DropdownMenu as DropdownMenuPrimitive } from 'radix-vue'
+import { ChevronRight } from 'lucide-vue-next'
+import { cn } from '@/lib/utils'
 
 const props = defineProps({
-  disabled: { type: Boolean, required: false },
-  textValue: { type: String, required: false },
-  asChild: { type: Boolean, required: false },
-  as: { type: null, required: false },
-  class: { type: null, required: false },
-});
-
-const delegatedProps = computed(() => {
-  const { class: _, ...delegated } = props;
-
-  return delegated;
-});
-
-const forwardedProps = useForwardProps(delegatedProps);
+  inset: { type: Boolean, required: false },
+  class: { type: String, required: false },
+  disabled: { type: Boolean, required: false }
+})
 </script>
 
 <template>
-  <DropdownMenuSubTrigger
-    v-bind="forwardedProps"
-    :class="
-      cn(
-        'flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none focus:bg-accent data-[state=open]:bg-accent',
-        props.class,
-      )
-    "
+  <DropdownMenuPrimitive.SubTrigger
+    v-bind="props"
+    :class="cn(
+      'flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none focus:bg-accent data-[state=open]:bg-accent',
+      inset && 'pl-8',
+      props.class
+    )"
   >
     <slot />
     <ChevronRight class="ml-auto h-4 w-4" />
-  </DropdownMenuSubTrigger>
+  </DropdownMenuPrimitive.SubTrigger>
 </template>

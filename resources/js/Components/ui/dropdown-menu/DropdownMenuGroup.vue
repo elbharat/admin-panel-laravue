@@ -1,14 +1,14 @@
 <script setup>
-import { DropdownMenuGroup } from 'reka-ui';
+import { DropdownMenu as DropdownMenuPrimitive } from 'radix-vue'
+import { cn } from '@/lib/utils'
 
 const props = defineProps({
-  asChild: { type: Boolean, required: false },
-  as: { type: null, required: false },
-});
+  class: { type: String, required: false }
+})
 </script>
 
 <template>
-  <DropdownMenuGroup v-bind="props">
+  <DropdownMenuPrimitive.Group :class="cn('p-1', props.class)">
     <slot />
-  </DropdownMenuGroup>
+  </DropdownMenuPrimitive.Group>
 </template>

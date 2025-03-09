@@ -1,23 +1,25 @@
 <script setup>
-import { TabsRoot, useForwardPropsEmits } from 'reka-ui';
+import { Tabs as TabsPrimitive } from 'radix-vue'
+import { cn } from '@/lib/utils'
 
 const props = defineProps({
-  defaultValue: { type: null, required: false },
-  orientation: { type: String, required: false },
+  defaultValue: { type: String, required: false },
+  value: { type: String, required: false },
+  orientation: { type: String, required: false, default: 'horizontal' },
   dir: { type: String, required: false },
-  activationMode: { type: String, required: false },
-  modelValue: { type: null, required: false },
-  unmountOnHide: { type: Boolean, required: false },
-  asChild: { type: Boolean, required: false },
-  as: { type: null, required: false },
-});
-const emits = defineEmits(['update:modelValue']);
+  activationMode: { type: String, required: false, default: 'automatic' },
+  class: { type: String, required: false }
+})
 
-const forwarded = useForwardPropsEmits(props, emits);
+defineEmits(['update:value'])
 </script>
 
 <template>
-  <TabsRoot v-bind="forwarded">
+  <TabsPrimitive.Root
+    v-bind="props"
+    :class="cn('w-full', props.class)"
+    @update:value="$emit('update:value', $event)"
+  >
     <slot />
-  </TabsRoot>
+  </TabsPrimitive.Root>
 </template>

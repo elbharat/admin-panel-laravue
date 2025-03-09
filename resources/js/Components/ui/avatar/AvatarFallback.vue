@@ -1,15 +1,21 @@
 <script setup>
-import { AvatarFallback } from 'reka-ui';
+import { Avatar as AvatarPrimitive } from 'radix-vue'
+import { cn } from '@/lib/utils'
 
 const props = defineProps({
   delayMs: { type: Number, required: false },
-  asChild: { type: Boolean, required: false },
-  as: { type: null, required: false },
-});
+  class: { type: String, required: false }
+})
 </script>
 
 <template>
-  <AvatarFallback v-bind="props">
+  <AvatarPrimitive.Fallback
+    :delayMs="delayMs"
+    :class="cn(
+      'flex h-full w-full items-center justify-center rounded-full bg-muted',
+      props.class
+    )"
+  >
     <slot />
-  </AvatarFallback>
+  </AvatarPrimitive.Fallback>
 </template>

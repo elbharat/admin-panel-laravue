@@ -1,8 +1,8 @@
-import { clsx } from 'clsx';
+import { cva } from 'class-variance-authority';
 import { twMerge } from 'tailwind-merge';
 
 export function cn(...inputs) {
-  return twMerge(clsx(inputs));
+  return twMerge(inputs.filter(Boolean).join(' '));
 }
 
 export function valueUpdater(updaterOrValue, ref) {

@@ -1,18 +1,21 @@
 <script setup>
-import { DropdownMenuRadioGroup, useForwardPropsEmits } from 'reka-ui';
+import { DropdownMenu as DropdownMenuPrimitive } from 'radix-vue'
+import { cn } from '@/lib/utils'
 
 const props = defineProps({
-  modelValue: { type: String, required: false },
-  asChild: { type: Boolean, required: false },
-  as: { type: null, required: false },
-});
-const emits = defineEmits(['update:modelValue']);
+  modelValue: { type: [String, Number], required: false },
+  class: { type: String, required: false }
+})
 
-const forwarded = useForwardPropsEmits(props, emits);
+defineEmits(['update:modelValue'])
 </script>
 
 <template>
-  <DropdownMenuRadioGroup v-bind="forwarded">
+  <DropdownMenuPrimitive.RadioGroup
+    :model-value="modelValue"
+    :class="cn('p-1', props.class)"
+    @update:model-value="$emit('update:modelValue', $event)"
+  >
     <slot />
-  </DropdownMenuRadioGroup>
+  </DropdownMenuPrimitive.RadioGroup>
 </template>
